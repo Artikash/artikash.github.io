@@ -28,6 +28,7 @@ document.getElementById("archive").querySelectorAll("h3").forEach(function (elem
 
 var posts = {
 	"March 2019": [
+		"<a href=\"?clipboard_monitor.html\">Clipboard Monitor</a>",
 		"<a href=\"?iile.html\">Immediately Invoked Lambda Expressions in C++</a>"
 	],
 	"February 2019": [

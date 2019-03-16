@@ -1,0 +1,22 @@
+<h2>Immediately Invoked Lambda Expressions in C++</h2>
+<h3>WIP</h3>
+<p>My journey as a programmer is long, but the important part of it for today is that I spent a long time working with
+	web front-ends i.e. JavaScript,
+	but recently have been making a fairly complex C++ desktop app.
+</p>
+<p>As such, I use a technique in my C++ that is used and talked about all the time in JavaScript, but seems to not be in
+	C++.</p>
+<p>Before I explain it, you should know the problem that it solves.</p>
+<pre style="color:#000000;background:#ffffff;"><span style="color:#800000; font-weight:bold; ">class</span> Foo
+	<span style="color:#800080; ">{</span>
+	<span style="color:#800000; font-weight:bold; ">public</span><span style="color:#e34adc; ">:</span>
+		Foo<span style="color:#808030; ">(</span><span style="color:#800000; font-weight:bold; ">int</span> cbar<span style="color:#808030; ">)</span> <span style="color:#800080; ">:</span>
+			bar<span style="color:#800080; ">{</span> <span style="color:#696969; ">/*</span><span style="color:#ffffff; background:#808000; ">???</span><span style="color:#696969; ">*/</span> <span style="color:#800080; ">}</span>
+		<span style="color:#800080; ">{</span><span style="color:#800080; ">}</span>
+	<span style="color:#800000; font-weight:bold; ">private</span><span style="color:#e34adc; ">:</span>
+		<span style="color:#800000; font-weight:bold; ">const</span> <span style="color:#800000; font-weight:bold; ">int</span> cbar<span style="color:#800080; ">;</span>
+	<span style="color:#800080; ">}</span><span style="color:#800080; ">;</span>
+	</pre>
+<p>When writing the constructor of class <code>Foo</code>, <code>cbar</code> must be initialized in the initializer list because it's <code>const</code>.
+	The problem is that initializer lists may only contain expressions, not statements. If the initialization code needs multiple statements, you're fucked!
+</p>

@@ -2,9 +2,9 @@ var xhr = new XMLHttpRequest;
 xhr.open("GET", window.location.search.slice(1));
 xhr.send();
 xhr.onload = function () {
-		document.getElementById("blog").innerHTML = xhr.responseText.startsWith("<!DOCTYPE html>") 
-			? recentPosts
-			: xhr.responseText;
+	document.getElementById("blog").innerHTML = xhr.responseText.startsWith("<!DOCTYPE html>")
+		? recentPosts
+		: xhr.responseText;
 };
 
 document.getElementById("archive").querySelectorAll("h3").forEach(function (element) {
@@ -17,7 +17,7 @@ document.getElementById("archive").querySelectorAll("h3").forEach(function (elem
 		} else {
 			list = document.createElement("ul");
 			var currentPosts = posts[element.innerText];
-			if (currentPosts && currentPosts.forEach) {		
+			if (currentPosts && currentPosts.forEach) {
 				currentPosts.forEach(function (link) {
 					list.appendChild(document.createElement("li")).innerHTML = link;
 				});

@@ -2,8 +2,9 @@ var xhr = new XMLHttpRequest;
 xhr.open("GET", window.location.search.slice(1));
 xhr.send();
 xhr.onload = function () {
-	if (!xhr.responseText.startsWith("<!DOCTYPE html>"))
-		document.getElementById("blog").innerHTML = xhr.responseText;
+		document.getElementById("blog").innerHTML = xhr.responseText.startsWith("<!DOCTYPE html>") 
+			? recentPosts
+			: xhr.responseText;
 };
 
 document.getElementById("archive").querySelectorAll("h3").forEach(function (element) {
@@ -35,3 +36,10 @@ var posts = {
 		"<a href=\"?hello_world.html\">Hello World!</a>"
 	]
 };
+
+var recentPosts = "<h2>Recent Posts</h2>";
+["March 2019", "February 2019"].forEach(function (month) {
+	for (var i = 0; i < posts[month].length; ++i) {
+		recentPosts += "<h3>" + posts[month][i] + "</h3>";
+	}
+});

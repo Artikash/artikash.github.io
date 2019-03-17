@@ -1,31 +1,33 @@
-var xhr = new XMLHttpRequest;
-xhr.open("GET", window.location.search.slice(1));
+var xhr = new XMLHttpRequest();
+xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
 xhr.send();
 xhr.onload = function () {
-	document.getElementById("blog").innerHTML = xhr.responseText.startsWith("<!DOCTYPE html>")
+	document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
 		? recentPosts
 		: xhr.responseText;
 };
 
-document.getElementById("archive").querySelectorAll("h3").forEach(function (element) {
-	element.style.cursor = "pointer";
-	var list = null;
-	element.onclick = function () {
-		if (list) {
-			document.getElementById("archive").removeChild(list);
-			list = null;
-		} else {
-			list = document.createElement("ul");
-			var currentPosts = posts[element.innerText];
-			if (currentPosts && currentPosts.forEach) {
-				currentPosts.forEach(function (link) {
-					list.appendChild(document.createElement("li")).innerHTML = link;
-				});
+for (var i = 0, elements = document.getElementById("archive").querySelectorAll("h3"); i < elements.length; ++i) {
+	(function (element) {
+		element.style.cursor = "pointer";
+		var list = null;
+		element.onclick = function () {
+			if (list) {
+				document.getElementById("archive").removeChild(list);
+				list = null;
+			} else {
+				list = document.createElement("ul");
+				var currentPosts = posts[element.innerText];
+				if (currentPosts && currentPosts.forEach) {
+					currentPosts.forEach(function (link) {
+						list.appendChild(document.createElement("li")).innerHTML = link;
+					});
+				}
+				element.insertAdjacentElement("afterend", list);
 			}
-			element.insertAdjacentElement("afterend", list);
-		}
-	};
-});
+		};
+	})(elements[i]);
+}
 
 var posts = {
 	"March 2019": [

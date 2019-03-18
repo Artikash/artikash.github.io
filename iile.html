@@ -6,11 +6,10 @@
 <h2>Immediately Invoked Lambda Expressions in C++</h2>
 <h3>WIP</h3>
 <p>My journey as a programmer is long, but the important part of it for today is that I spent a long time working with
-	web front-ends i.e. JavaScript,
-	but recently have been making a fairly complex C++ desktop app.
+	web front-ends i.e. JavaScript, but recently have been making a fairly complex C++ desktop app.
 </p>
-<p>As such, I use a technique in my C++ that is used and talked about all the time in JavaScript, but seems to not be so in
-	C++.</p>
+<p>As such, I use a technique in my C++ that is used and talked about all the time in JavaScript, but seems to not be so
+	in C++.</p>
 <p>Before I explain it, you should know the problem that it solves.</p>
 <code>class Foo
 {
@@ -21,6 +20,8 @@ public:
 private:
 	const int cbar;
 };</code>
-<p>When writing the constructor of class <code>Foo</code>, <code>cbar</code> must be initialized in the initializer list because it's <code>const</code>.
-	The problem is that initializer lists may only contain expressions, not statements. If the initialization code needs multiple statements, you're fucked!
+<p>When writing the constructor of class <code>Foo</code>, <code>cbar</code> must be initialized in the initializer list
+	because it's <code>const</code>.
+	The problem is that initializer lists may only contain expressions, not statements. If the initialization code needs
+	multiple statements, you're fucked!
 </p>

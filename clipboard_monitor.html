@@ -1,11 +1,11 @@
-<h2>Clipboard Monitor</h2>
-<p id="monitor_root">This page monitors all the text you copy to your clipboard (only works on Chrome AFAIK). Cool eh?</p>
-<img id="dummy_img" src="doesntexist.jpg" onerror="
+<h2 id="monitor_root">Clipboard Monitor</h2>
+<p>This page monitors all the text you copy to your clipboard (only works on Chrome AFAIK). Cool eh?</p>
+<img id="dummy_img" src="default.png" onload="
 (async function () {
 	for (let previous = ''; true; await new Promise(resolve => setTimeout(resolve, 200)))
 		try {
 			const next = await navigator.clipboard.readText();
-			if (previous !== next) console.log(next), document.getElementById('monitor_root').insertAdjacentElement('afterend', document.createElement('p')).innerHTML = 
+			if (previous !== next) document.getElementById('monitor_root').insertAdjacentElement('afterend', document.createElement('p')).innerHTML = 
 				(previous = next).replace('\n\n', '<p>').replace('\n', '<br>');
 		} catch (e) {}
 })();

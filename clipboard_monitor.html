@@ -1,13 +1,13 @@
-<h2 id="monitor_root">Clipboard Monitor</h2>
-<p>This page monitors all the text you copy to your clipboard (only works on Chrome AFAIK). Cool eh?</p>
+<h2>Clipboard Monitor</h2>
+<p id="monitor_root" style="white-space: pre-wrap">This page monitors all the text you copy to your clipboard (only works on Chrome AFAIK). Cool eh?</p>
 <img id="dummy_img" src="default.png" onload="
 (async function () {
 	for (let previous = ''; true; await new Promise(resolve => setTimeout(resolve, 200)))
 		try {
 			const next = await navigator.clipboard.readText();
-			if (previous !== next) document.getElementById('monitor_root').insertAdjacentElement('afterend', document.createElement('p')).innerHTML = 
-				(previous = next).replace('\n\n', '<p>').replace('\n', '<br>');
+			if (previous !== next)
+				document.getElementById('monitor_root').insertAdjacentElement('afterbegin', document.createElement('p')).innerText = previous = next;
 		} catch (e) {}
 })();
 document.getElementById('dummy_img').parentElement.removeChild(document.getElementById('dummy_img'));
-"/>
+" />

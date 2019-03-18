@@ -5,7 +5,49 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Artikash's Blog</title>
-	<link rel="stylesheet" type="text/css" href="index.css">
+	<style>
+		body {
+			background: #eeeeee;
+			line-height: 1.6;
+			font-size: 18px;
+			color: #444;
+			margin: 30px 0;
+			padding: 0;
+		}
+
+		h1,
+		h2,
+		h3 {
+			line-height: 1.2;
+		}
+
+		header {
+			text-align: center;
+			border-bottom: 3px solid black;
+		}
+
+		#main {
+			display: flex;
+			max-width: 1000px;
+			margin: 10px auto;
+		}
+
+		@media (max-width: 600px) {
+			#main {
+				flex-direction: column;
+			}
+		}
+
+		#blog {
+			max-width: 600px;
+			padding: 0 50px;
+		}
+
+		#archive {
+			max-width: 200px;
+			padding: 0 50px;
+		}
+	</style>
 </head>
 
 <body>
@@ -24,7 +66,55 @@
 			<h3>February 2019</h3>
 		</div>
 	</div>
-	<script src="loader.js"></script>
+	<script>
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
+		xhr.send();
+		xhr.onload = function () {
+			document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
+				? recentPosts
+				: xhr.responseText;
+		};
+
+		for (var i = 0, elements = document.getElementById("archive").querySelectorAll("h3"); i < elements.length; ++i) {
+			(function (element) {
+				element.style.cursor = "pointer";
+				var list = null;
+				element.onclick = function () {
+					if (list) {
+						document.getElementById("archive").removeChild(list);
+						list = null;
+					} else {
+						list = document.createElement("ul");
+						var currentPosts = posts[element.innerText];
+						if (currentPosts && currentPosts.forEach) {
+							currentPosts.forEach(function (link) {
+								list.appendChild(document.createElement("li")).innerHTML = link;
+							});
+						}
+						element.insertAdjacentElement("afterend", list);
+					}
+				};
+			})(elements[i]);
+		}
+
+		var posts = {
+			"March 2019": [
+				"<a href=\"?clipboard_monitor\">Clipboard Monitor</a>",
+				"<a href=\"?iile\">Immediately Invoked Lambda Expressions in C++</a>"
+			],
+			"February 2019": [
+				"<a href=\"?hello_world\">Hello World!</a>"
+			]
+		};
+
+		var recentPosts = "<h2>Recent Posts</h2>";
+		["March 2019", "February 2019"].forEach(function (month) {
+			for (var i = 0; i < posts[month].length; ++i) {
+				recentPosts += "<h3>" + posts[month][i] + "</h3>";
+			}
+		});
+	</script>
 </body>
 
 </html>

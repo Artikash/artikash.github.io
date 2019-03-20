@@ -62,58 +62,65 @@
 		</div>
 		<div id="archive">
 			<h2>Archive</h2>
-			<h3>March 2019</h3>
-			<h3>February 2019</h3>
 		</div>
 	</div>
 	<script>
+		var posts = [
+			{
+				month: "March 2019",
+				links: [
+					"<a href=\"?clipboard_monitor\">Clipboard Monitor</a>",
+					"<a href=\"?iile\">Immediately Invoked Lambda Expressions in C++</a>"
+				]
+			},
+			{
+				month: "February 2019",
+				links: [			
+					"<a href=\"?hello_world\">Hello World!</a>"
+				]
+			}
+		];
+
+		var archive = document.getElementById("archive");
+		for (var i = 0; i < posts.length; ++i) {
+			var element = archive.appendChild(document.createElement("h3"));
+			element.innerText = posts[i].month;
+			(function (element, links) {
+				element.style.cursor = "pointer";
+				var list = null;
+				element.onclick = function () {
+					if (list) {
+						archive.removeChild(list);
+						list = null;
+					} else {
+						list = document.createElement("ul");
+						for (var i = 0; i < links.length; ++i) {
+							list.appendChild(document.createElement("li")).innerHTML = links[i];
+						}
+						element.insertAdjacentElement("afterend", list);
+					}
+				};
+			})(element, posts[i].links);
+		}
+
+		var defaultContent = "<h2>Your browser is incompatible with this webpage :(</h2>";
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
 		xhr.send();
 		xhr.onload = function () {
 			document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
-				? recentPosts
+				? defaultContent
 				: xhr.responseText;
 		};
 
-		for (var i = 0, elements = document.getElementById("archive").querySelectorAll("h3"); i < elements.length; ++i) {
-			(function (element) {
-				element.style.cursor = "pointer";
-				var list = null;
-				element.onclick = function () {
-					if (list) {
-						document.getElementById("archive").removeChild(list);
-						list = null;
-					} else {
-						list = document.createElement("ul");
-						var currentPosts = posts[element.innerText];
-						if (currentPosts && currentPosts.forEach) {
-							currentPosts.forEach(function (link) {
-								list.appendChild(document.createElement("li")).innerHTML = link;
-							});
-						}
-						element.insertAdjacentElement("afterend", list);
-					}
-				};
-			})(elements[i]);
-		}
-
-		var posts = {
-			"March 2019": [
-				"<a href=\"?clipboard_monitor\">Clipboard Monitor</a>",
-				"<a href=\"?iile\">Immediately Invoked Lambda Expressions in C++</a>"
-			],
-			"February 2019": [
-				"<a href=\"?hello_world\">Hello World!</a>"
-			]
-		};
-
-		var recentPosts = "<h2>Recent Posts</h2>";
-		["March 2019", "February 2019"].forEach(function (month) {
-			for (var i = 0; i < posts[month].length; ++i) {
-				recentPosts += "<h3>" + posts[month][i] + "</h3>";
+		defaultContent = "<h2>Recent Posts</h2>";
+		var recentPostCount = 0;
+		for (var i = 0; i < posts.length && recentPostCount < 10; ++i) {
+			for (var j = 0; j < posts[i].links.length && recentPostCount < 10; ++j) {
+				defaultContent += "<h3>" + posts[i].links[j] + "</h3>";
+				recentPostCount += 1;
 			}
-		});
+		}
 	</script>
 </body>
 

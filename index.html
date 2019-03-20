@@ -107,10 +107,12 @@
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
 		xhr.send();
-		xhr.onload = function () {
-			document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
-				? defaultContent
-				: xhr.responseText;
+		xhr.onreadystatechange = function () {
+			if (xhr.status === 4) {
+				document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
+					? defaultContent
+					: xhr.responseText;
+			}
 		};
 
 		defaultContent = "<h2>Recent Posts</h2>";

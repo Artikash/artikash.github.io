@@ -108,7 +108,7 @@
 		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
 		xhr.send();
 		xhr.onreadystatechange = function () {
-			if (xhr.status === 4) {
+			if (xhr.readyState === 4) {
 				document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
 					? defaultContent
 					: xhr.responseText;

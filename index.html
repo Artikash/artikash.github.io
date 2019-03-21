@@ -75,7 +75,7 @@
 			},
 			{
 				month: "February 2019",
-				links: [			
+				links: [
 					"<a href=\"?hello_world\">Hello World!</a>"
 				]
 			}
@@ -84,7 +84,7 @@
 		var archive = document.getElementById("archive");
 		for (var i = 0; i < posts.length; ++i) {
 			var element = archive.appendChild(document.createElement("h3"));
-			element.innerText = posts[i].month;
+			element.innerText = posts[i].month + "▾";
 			(function (element, links) {
 				element.style.cursor = "pointer";
 				var list = null;

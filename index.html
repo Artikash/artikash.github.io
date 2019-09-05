@@ -21,6 +21,11 @@
 			line-height: 1.2;
 		}
 
+		code {
+			white-space: pre-wrap;
+			tab-size: 4;
+		}
+
 		header {
 			text-align: center;
 			border-bottom: 3px solid black;
@@ -58,7 +63,9 @@
 	</header>
 	<div id="main">
 		<div id="blog">
-			<noscript><h2>This site requires JavaScript to be enabled.</h2></noscript>
+			<noscript>
+				<h2>This site requires JavaScript to be enabled.</h2>
+			</noscript>
 			<h2>Loading...</h2>
 		</div>
 		<div id="archive">
@@ -68,14 +75,19 @@
 	<script>
 		var posts = [
 			{
-				month: "March 2019",
+				month: "September 2019",
 				links: [
-					"<a href=\"?clipboard_monitor\">Clipboard Monitor</a>",
+					"<a href=\"?this_js_cxx\"><code>this</code>: C++ vs JavaScript</a>"
+				]
+			},
+			{
+				month: "August 2019",
+				links: [
 					"<a href=\"?iile\">Immediately Invoked Lambda Expressions in C++</a>"
 				]
 			},
 			{
-				month: "February 2019",
+				month: "March 2019",
 				links: [
 					"<a href=\"?hello_world\">Hello World!</a>"
 				]

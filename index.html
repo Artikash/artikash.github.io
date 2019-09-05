@@ -23,7 +23,6 @@
 
 		code {
 			white-space: pre-wrap;
-			tab-size: 4;
 		}
 
 		header {
@@ -94,8 +93,7 @@
 			}
 		];
 
-		var archive = document.getElementById("archive");
-		for (var i = 0; i < posts.length; ++i) {
+		for (var archive = document.getElementById("archive"), i = 0; i < posts.length; ++i) {
 			var element = archive.appendChild(document.createElement("h3"));
 			element.innerText = posts[i].month + "▾";
 			(function (element, links) {
@@ -125,15 +123,16 @@
 				document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
 					? defaultContent
 					: xhr.responseText;
+				for (var elements = document.querySelectorAll("code"), i = 0; i < elements.length; ++i) {
+					elements[i].innerHTML = elements[i].innerHTML.replace(/\t/g, "    ");
+				}
 			}
 		};
 
 		defaultContent = "<h2>Recent Posts</h2>";
-		var recentPostCount = 0;
-		for (var i = 0; i < posts.length && recentPostCount < 10; ++i) {
-			for (var j = 0; j < posts[i].links.length && recentPostCount < 10; ++j) {
+		for (var recentPostCount = 0, i = 0; i < posts.length; ++i) {
+			for (var j = 0; recentPostCount < 10 && j < posts[i].links.length; ++recentPostCount, ++j) {
 				defaultContent += "<h3>" + posts[i].links[j] + "</h3>";
-				recentPostCount += 1;
 			}
 		}
 	</script>

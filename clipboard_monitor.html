@@ -7,28 +7,35 @@
 			const next = await navigator.clipboard.readText();
 			if (previous !== next) f(previous = next);
 		} catch (e) {}
-})(async (text) => {
+})((text) => {
 	const element =
 		document.getElementById('monitor_root').insertAdjacentElement('afterbegin', document.createElement('p'));
 	element.innerText = text;
-	if (window.API_KEY) {
-		const translate = async () => {
-			try {
-				const fetchJson = async url => await (await fetch(url)).json();
-				const base = 'https://www.googleapis.com/language/translate/v2/';
-				const query = `?key=${window.API_KEY}&q=${text}&target=${window.lang || 'en'}&source=`;
-				const lang = (await fetchJson(base + 'detect' + query)).data.detections[0][0].language;
-				return (await fetchJson(base + query + lang)).data.translations[0].translatedText;
-			} catch (e) {
-				return e;
-			}
-		};
-		const show = async () =>
-			element.insertAdjacentElement('beforebegin', document.createElement('p')).innerText = await translate(text);
-		if (window.autoTranslate) show();
-		else element.addEventListener('dblclick', show);
-	}
+	const show = async () =>
+		element.insertAdjacentElement('beforebegin', document.createElement('p')).innerText = await Translate(text);
+	if (window.autoTranslate) show();
+	else element.addEventListener('dblclick', show);
 });
-console.log('Variables to set: API_KEY, autoTranslate');
-console.log('Get API_KEY from https://console.developers.google.com/apis/credentials');
+
+let TKK = 0;
+async function Translate(text) {
+	if (!TKK) TKK = +(await (await fetch('https://cors-anywhere.herokuapp.com/https://translate.google.com'))
+		.text()).match(/(\d{7,})'/)[1];
+	let a = Math.floor(new Date / 3600000), b = a, i = 0;
+	for (const encodedText = encodeURIComponent(text); i < encodedText.length;) {
+		a += encodedText[i] === '%' ? parseInt(encodedText.substr((i += 3) - 2, 2), 16) : encodedText.charCodeAt(i++);
+	  	a += a << 10;
+	  	a ^= a >>> 6;
+	}
+	a += a << 3;
+	a ^= a >>> 11;
+	a += a << 15;
+	a ^= TKK;
+	if (a < 0) a = (a & 0x7FFFFFFF) + 0x80000000;
+	a %= 1e6;
+	return (await (await fetch(
+		'https://translate.googleapis.com/translate_a/single?client=webapp&dt=ld&dt=rm&dt=t&sl=auto&tl=en&tk=' +
+		a + '.' + (a ^ b) + '&q=' + encodeURIComponent(text)
+	)).json())[0].filter(v => v[0]).map(v => v[0]).join(' ');
+}
 " />

@@ -1,11 +1,34 @@
 <h2>Clipboard Monitor</h2>
 <p id="monitor_root" style="white-space: pre-wrap">This page monitors all the text you copy to your clipboard (only works on Chrome AFAIK). Cool eh?</p>
 <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" onload="
-(async function (f) {
+(async (f) => {
 	for (let previous; ; await new Promise(resolve => setTimeout(resolve, 200)))
 		try {
 			const next = await navigator.clipboard.readText();
 			if (previous !== next) f(previous = next);
 		} catch (e) {}
-})(text => document.getElementById('monitor_root').insertAdjacentElement('afterbegin', document.createElement('p')).innerText = text);
+})(async (text) => {
+	const element =
+		document.getElementById('monitor_root').insertAdjacentElement('afterbegin', document.createElement('p'));
+	element.innerText = text;
+	if (window.API_KEY) {
+		const translate = async () => {
+			try {
+				const fetchJson = async url => await (await fetch(url)).json();
+				const base = 'https://www.googleapis.com/language/translate/v2/';
+				const query = `?key=${window.API_KEY}&q=${text}&target=${window.lang || 'en'}&source=`;
+				const lang = (await fetchJson(base + 'detect' + query)).data.detections[0][0].language;
+				return (await fetchJson(base + query + lang)).data.translations[0].translatedText;
+			} catch (e) {
+				return e;
+			}
+		};
+		const show = async () =>
+			element.insertAdjacentElement('beforebegin', document.createElement('p')).innerText = await translate(text);
+		if (window.autoTranslate) show();
+		else element.addEventListener('dblclick', show);
+	}
+});
+console.log('Variables to set: API_KEY, autoTranslate');
+console.log('Get API_KEY from https://console.developers.google.com/apis/credentials');
 " />

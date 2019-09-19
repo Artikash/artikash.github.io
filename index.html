@@ -21,13 +21,17 @@
 			line-height: 1.2;
 		}
 
+		header {
+			text-align: center;
+			border-bottom: 3px solid black;
+		}
+
 		code {
 			white-space: pre-wrap;
 		}
 
-		header {
-			text-align: center;
-			border-bottom: 3px solid black;
+		dt {
+			margin-top: 15px;
 		}
 
 		#main {
@@ -116,7 +120,6 @@
 			})(element, posts[i].links);
 		}
 
-		var defaultContent = "<h2>Your browser is incompatible with this webpage :(</h2>";
 		var xhr = new XMLHttpRequest();
 		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
 		xhr.send();
@@ -131,7 +134,7 @@
 			}
 		};
 
-		defaultContent = "<h2>Recent Posts</h2>";
+		var defaultContent = "<h2>Recent Posts</h2>";
 		for (var recentPostCount = 0, i = 0; i < posts.length; ++i) {
 			for (var j = 0; recentPostCount < 10 && j < posts[i].links.length; ++recentPostCount, ++j) {
 				defaultContent += "<h3>" + posts[i].links[j] + "</h3>";

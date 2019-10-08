@@ -1,10 +1,14 @@
 <h2>Immediately Invoked Lambda Expressions (IILEs) in C++</h2>
-<p>My journey as a programmer is long, but the important part of it for today is that I spent a long time working with
-	web front-ends i.e. JavaScript, but recently have been making a fairly complex C++ desktop app.</p>
-<p>As such, I use a technique in my C++ that is used and talked about all the time in JavaScript, but seems to not be so
-	in C++.</p>
+<p>
+	My journey as a programmer is long, but the important part of it for today is that I spent a long time working with
+	web front-ends i.e. JavaScript, but recently have been making a fairly complex C++ desktop app.
+</p>
+<p>
+	As such, I use a technique in my C++ that is used and talked about all the time in JavaScript, but seems to not be
+	so in C++.
+</p>
 <p>Before I explain it, you should know the problem that it solves.</p>
-<code>class foo
+<pre><code>class foo
 {
 public:
 	foo(int bar) :
@@ -12,17 +16,19 @@ public:
 	{}
 private:
 	const int m_bar;
-};</code>
-<p>When writing the constructor of class <code>foo</code>, <code>m_bar</code> must be initialized in the initializer
-	list because it's <code>const</code>.
-	The problem is that initializer lists may only contain expressions, not statements. If the initialization code needs
-	multiple statements, you're fucked! In the example above, even though it can technically be done, it's definitely
-	not something you want in your codebase. And you can easily imagine situations where it gets much uglier or is
-	impossible (most notably, if you want to create temporary variables to store the results of intermediate
-	computations). Of course, you could define a helper function instead, but then it's very annoying to use variables
-	that are only in scope at the call site. Also you now have to name it, and naming things is hard.</p>
+};</code></pre>
+<p>
+	When writing the constructor of class <code>foo</code>, <code>m_bar</code> must be initialized in the initializer
+	list because it's <code>const</code>. The problem is that initializer lists may only contain expressions, not
+	statements. If the initialization code needs multiple statements, you're fucked! In the example above, even though
+	it can technically be done, it's definitely not something you want in your codebase. And you can easily imagine
+	situations where it gets much uglier or is impossible (most notably, if you want to create temporary variables to
+	store the results of intermediate computations). Of course, you could define a helper function instead, but then
+	it's very annoying to use variables that are only in scope at the call site. Also you now have to name it, and
+	naming things is hard.
+</p>
 <p>This is where Immediately Invoked Lambda Expressions come in:</p>
-<code>class foo
+<pre><code>class foo
 {
 public:
 	foo(int bar) :
@@ -37,16 +43,21 @@ public:
 	{}
 private:
 	const int m_bar;
-};</code>
-<p>The great thing about lambdas is that defining and calling them is considered a single expression. It is thus
-	possible to use multiple statements in the initialization of <code>m_bar</code>. Once you've gotten used to
-	this technique (which will happen almost instantly), it can greatly improve the clarity of your code as well
-	as being outright more powerful/flexible than whatever horrifying amalgamation of comma operators you might
-	use before.</p>
-<p>Of course, initializer lists aren't the only location where it's useful to convert statement(s) to an expression.
-	There are many situations in C++ where you must supply one expression, and IILEs can be useful in all of them</p>
-<p>One annoying thing about C++ is that you have to go to the end of the lambda and check for the parentheses to
-	know if it's being immediately invoked or not (as opposed to JavaScript, where <code>(function ...</code> is
-	a dead giveaway for an IIFE). To alleviate this, you can use <code>std::invoke</code> like
-	<code>std::invoke([&] { ... })</code>. This shows at the start that the lambda will be invoked immediately,
-	but will increase your compile times. Whether that's worth it is up to you.</p>
+};</code></pre>
+<p>
+	The great thing about lambdas is that defining and calling them is considered a single expression. It is thus
+	possible to use multiple statements in the initialization of <code>m_bar</code>. Once you've gotten used to this
+	technique (which will happen almost instantly), it can greatly improve the clarity of your code as well as being
+	outright more powerful/flexible than whatever horrifying amalgamation of comma operators you might use before.
+</p>
+<p>
+	Of course, initializer lists aren't the only location where it's useful to convert statement(s) to an expression.
+	There are many situations in C++ where you must supply one expression, and IILEs can be useful in all of them
+</p>
+<p>
+	One annoying thing about C++ is that you have to go to the end of the lambda and check for the parentheses to know
+	if it's being immediately invoked or not (as opposed to JavaScript, where <code>(function ...</code> is a dead
+	giveaway for an IIFE). To alleviate this, you can use <code>std::invoke</code> like
+	<code>std::invoke([&] { ... })</code>. This shows at the start that the lambda will be invoked immediately, but will
+	increase your compile times. Whether that's worth it is up to you.
+</p>

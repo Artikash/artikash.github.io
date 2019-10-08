@@ -1,146 +1,125 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Artikash's Blog</title>
+		<style>
+			body {
+				background: #eeeeee;
+				line-height: 1.6;
+				font-size: 16px;
+				color: #444;
+				margin: 30px 0;
+				padding: 0;
+			}
 
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Artikash's Blog</title>
-	<style>
-		body {
-			background: #eeeeee;
-			line-height: 1.6;
-			font-size: 16px;
-			color: #444;
-			margin: 30px 0;
-			padding: 0;
-		}
+			h1,
+			h2,
+			h3 {
+				line-height: 1.2;
+			}
 
-		h1,
-		h2,
-		h3 {
-			line-height: 1.2;
-		}
+			header {
+				text-align: center;
+				border-bottom: 3px solid black;
+			}
 
-		header {
-			text-align: center;
-			border-bottom: 3px solid black;
-		}
-
-		code {
-			white-space: pre-wrap;
-		}
-
-		dt {
-			margin-top: 15px;
-		}
-
-		#main {
-			display: flex;
-			justify-content: center;
-			max-width: 1200px;
-			margin: 10px auto;
-		}
-
-		@media (max-width: 600px) {
 			#main {
-				flex-direction: column;
+				display: flex;
+				justify-content: center;
+				max-width: 1200px;
+				margin: 10px auto;
 			}
-		}
 
-		#blog {
-			max-width: 800px;
-			padding: 0 50px;
-		}
-
-		#archive {
-			max-width: 200px;
-			padding: 0 50px;
-		}
-	</style>
-</head>
-
-<body>
-	<header>
-		<h1>Welcome to <a href="https://github.com/Artikash">Artikash</a>'s blog.</h1>
-		<p>Where I discuss code and whatever else I feel like.<br><a href="/">Home</a></p>
-		<h2></h2>
-	</header>
-	<div id="main">
-		<div id="blog">
-			<noscript>
-				<h2>This site requires JavaScript to be enabled.</h2>
-			</noscript>
-			<h2>Loading...</h2>
-		</div>
-		<div id="archive">
-			<h2>Archive</h2>
-		</div>
-	</div>
-	<script>
-		"use strict";
-		var posts = [
-			{
-				month: "September 2019",
-				links: [
-					"<a href=\"?this_js_cxx\"><code>this</code>: C++ vs JavaScript</a>"
-				]
-			},
-			{
-				month: "August 2019",
-				links: [
-					"<a href=\"?iile\">Immediately Invoked Lambda Expressions in C++</a>"
-				]
-			},
-			{
-				month: "March 2019",
-				links: [
-					"<a href=\"?hello_world\">Hello World!</a>"
-				]
-			}
-		];
-
-		for (var archive = document.getElementById("archive"), i = 0; i < posts.length; ++i) {
-			var element = archive.appendChild(document.createElement("h3"));
-			element.innerText = posts[i].month + "▾";
-			(function (element, links) {
-				element.style.cursor = "pointer";
-				var list = null;
-				element.onclick = function () {
-					if (list) {
-						archive.removeChild(list);
-						list = null;
-					} else {
-						list = document.createElement("ul");
-						for (var i = 0; i < links.length; ++i) {
-							list.appendChild(document.createElement("li")).innerHTML = links[i];
-						}
-						element.insertAdjacentElement("afterend", list);
-					}
-				};
-			})(element, posts[i].links);
-		}
-
-		var xhr = new XMLHttpRequest();
-		xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
-		xhr.send();
-		xhr.onreadystatechange = function () {
-			if (xhr.readyState === 4) {
-				document.getElementById("blog").innerHTML = xhr.responseText.slice(0, 15) === "<!DOCTYPE html>"
-					? defaultContent
-					: xhr.responseText;
-				for (var elements = document.querySelectorAll("code"), i = 0; i < elements.length; ++i) {
-					elements[i].innerHTML = elements[i].innerHTML.replace(/\t/g, "    ");
+			@media (max-width: 600px) {
+				#main {
+					flex-direction: column;
 				}
 			}
-		};
 
-		var defaultContent = "<h2>Recent Posts</h2>";
-		for (var recentPostCount = 0, i = 0; i < posts.length; ++i) {
-			for (var j = 0; recentPostCount < 10 && j < posts[i].links.length; ++recentPostCount, ++j) {
-				defaultContent += "<h3>" + posts[i].links[j] + "</h3>";
+			#blog {
+				max-width: 800px;
+				padding: 0 50px;
 			}
-		}
-	</script>
-</body>
 
+			#archive {
+				max-width: 200px;
+				padding: 0 50px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<h1>Welcome to <a href="https://github.com/Artikash">Artikash</a>'s blog.</h1>
+			<p>Where I discuss code and whatever else I feel like.<br /><a href="/">Home</a></p>
+			<h2></h2>
+		</header>
+		<div id="main">
+			<div id="blog">
+				<noscript>
+					<h2>This site requires JavaScript to be enabled.</h2>
+				</noscript>
+				<h2>Loading...</h2>
+			</div>
+			<div id="archive">
+				<h2>Archive</h2>
+			</div>
+		</div>
+		<script>
+			"use strict";
+			var posts = [
+				{
+					month: "September 2019",
+					links: ['<a href="?this_js_cxx"><code>this</code>: C++ vs JavaScript</a>']
+				},
+				{
+					month: "August 2019",
+					links: ['<a href="?iile">Immediately Invoked Lambda Expressions in C++</a>']
+				},
+				{
+					month: "March 2019",
+					links: ['<a href="?hello_world">Hello World!</a>']
+				}
+			];
+
+			for (var archive = document.getElementById("archive"), i = 0; i < posts.length; ++i) {
+				var element = archive.appendChild(document.createElement("h3"));
+				element.innerText = posts[i].month + "▾";
+				(function(element, links) {
+					element.style.cursor = "pointer";
+					var list = null;
+					element.onclick = function() {
+						if (list) {
+							archive.removeChild(list);
+							list = null;
+						} else {
+							list = document.createElement("ul");
+							for (var i = 0; i < links.length; ++i)
+								list.appendChild(document.createElement("li")).innerHTML = links[i];
+							element.insertAdjacentElement("afterend", list);
+						}
+					};
+				})(element, posts[i].links);
+			}
+
+			var xhr = new XMLHttpRequest();
+			xhr.open("GET", (window.location.search || "doesnt_exist").slice(1));
+			xhr.send();
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState === 4) {
+					document.getElementById("blog").innerHTML =
+						xhr.responseText.slice(0, 15) === "<!DOCTYPE html>" ? defaultContent : xhr.responseText;
+					for (var elements = document.querySelectorAll("code"), i = 0; i < elements.length; ++i)
+						elements[i].innerHTML = elements[i].innerHTML.replace(/\t/g, "    ");
+				}
+			};
+
+			var defaultContent = "<h2>Recent Posts</h2>";
+			for (var recentPostCount = 0, i = 0; i < posts.length; ++i)
+				for (var j = 0; recentPostCount < 10 && j < posts[i].links.length; ++recentPostCount, ++j)
+					defaultContent += "<h3>" + posts[i].links[j] + "</h3>";
+		</script>
+	</body>
 </html>

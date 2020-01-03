@@ -1,9 +1,155 @@
+<style>
+	.compare {
+		display: flex;
+	}
+	.compare > * {
+		width: 50%;
+	}
+	.footnote {
+		display: block;
+		padding-bottom: 5px;
+	}
+</style>
 <h2><code>this</code>: C++ vs JavaScript</h2>
 <p>
 	As a quick google search for "this javascript" will show you, the <code>this</code> keyword is an unending source of
 	confusion in JavaScript. Meanwhile in C++, the <code>this</code> keyword causes hardly any confusion, even though it
-	works almost the exact same way!
+	works almost the exact same way! So let's discu-
 </p>
-<h3>Wait, WHAT!?</h3>
-<p>Yup, the <code>this</code> keyword behaves very similarly in C++ and JavaScript.</p>
-<h2>WIP</h2>
+<h3>
+	<i>Um, WHAT!? <code>this</code> works completely differently in those languages!</i>
+</h3>
+<p>
+	No, the <code>this</code> keyword behaves very similarly in C++ and JavaScript<sup>[1]</sup>. It is a (typically)
+	hidden argument passed to a function (typically) when it is a member of an object, and is a reference to the object
+	that the function is a member of. The following snippets show the typical way you use <code>this</code> in C++,
+	JavaScript, and other object oriented languages such as Java and Python:
+</p>
+<div class="compare">
+	<pre><code>struct Stopwatch {
+	time_t start = time(nullptr);
+	void reset() { this->start = time(nullptr); }
+	int lap() { return time(nullptr) - this->start; }
+};
+auto stopwatch = new Stopwatch;
+stopwatch->reset(); // passes stopwatch as this</code></pre>
+	<pre><code>class Stopwatch {
+	constructor() { this.start = new Date; }
+	reset() { this.start = new Date; }
+	lap() { return new Date - this.start; }
+};
+const stopwatch = new Stopwatch;
+stopwatch.reset(); // passes stopwatch as this</code></pre>
+</div>
+<h3>How <code>this</code> leads to problems:</h3>
+<p>
+	So that works perfectly. What makes <code>this</code> confusing is when you move to higher levels of abstraction.
+	C++ and JavaScript both allow you to treat any function as a first-class value: you can store it in a variable and
+	pass it to other functions. Say you have a function which expects a function returning a number as an argument:
+</p>
+<div class="compare">
+	<pre><code>void log(std::function&lt;int()&gt; func) { std::cout << func(); }
+log(stopwatch->lap); // compile time error!</code></pre>
+	<pre><code>function log(func) { console.log(func()); }
+log(stopwatch.lap); // also throws an error, but...</code></pre>
+</div>
+<p>
+	The fundamental mistake being made here is the choice of function passed to <code>log</code>.
+	<code>log</code> expects a function taking no arguments, <strong>not even a <code>this</code> argument</strong>, but
+	it's being called with a function that does take a <code>this</code> argument. To my knowledge, this scenario is
+	what typically causes confusion with <code>this</code> in JavaScript: programmers try to pass their function to
+	another function, not understanding that when their function gets called, because it's stored as an argument it's
+	not a member of an object, so it won't be called with a <code>this</code> argument.
+</p>
+<p>
+	This fundamental mistake manifests very differently between the two languages. In JavaScript, you get a runtime
+	error
+	<strong>inside <code>lap</code></strong> once it finds out its <code>this</code> argument isn't what it expected. In
+	C++ you get a compile error
+	<strong>
+		the instant you type <code>stopwatch->lap</code> and don't call it. C++ knows that makes no sense<sup>[2]</sup>
+		because of the type system:
+	</strong>
+	<code>lap</code> is no ordinary function returning a number, but a member function returning a number. This doesn't
+	mean it's impossible to use member functions as first-class values in C++ - it is! You just have to access them
+	differently:
+</p>
+<pre><code>log(&Stopwatch::lap); // wait, this is still a compile error...</code></pre>
+<p>
+	Yeah, because that code only fixes the syntax error of how to access <code>lap</code>. You now hit a type error
+	because <code>log</code> takes a <code>std::function&lt;int()&gt;</code> - a function taking no arguments. This is
+	the same fundamental problem as the JavaScript code - <code>lap</code> expects a <code>this</code> argument, but
+	you're sending it to a place where it won't get one. As before, C++ knows it makes no sense to pass
+	<code>lap</code> like this thanks to the type system, and shuts you down the instant you try.
+</p>
+<h3>Fixing the problem:</h3>
+<p>
+	If you've used JavaScript a lot, you've probably run into this before and thus know the solution - either bind
+	<code>this</code> to what you want or capture the <code>this</code> argument you want in a lambda. Indeed, this is
+	the solution in C++ as well:
+</p>
+<div class="compare">
+	<pre><code>log(std::bind(&Stopwatch::lap, stopwatch));
+log([&] { return stopwatch->lap(); });</code></pre>
+	<pre><code>log(stopwatch.lap.bind(stopwatch); // could use Stopwatch.prototype.lap too
+log(() => stopwatch.lap());</code></pre>
+</div>
+<p>All four of those will do exactly what you want :)</p>
+<h3>Why <code>this</code> is only a problem in JavaScript:</h3>
+<p>
+	The biggest reason <code>this</code> causes so much grief in JavaScript specifically is coding style. You only run
+	into these sorts of problems when mixing functional programming (specifically, treating functions as first-class
+	values) with object oriented programming (where <code>this</code> is a hidden parameter to functions). This has been
+	a core part of JavaScript since its inception, while C++ only recently gained the functional capabilities shown in
+	this post. The capabilities of the language dictate how people will program, and since JavaScript has supported
+	functional and object oriented programming for so long, programmers commonly mix the two. Many C++ programmers use
+	object oriented or generic programming almost exclusively even to this day.
+</p>
+<p>
+	On top of the fact that the required coding style is very rare in C++, on the few occasions you do run into it you
+	will find it much less confusing due to the type system. Notice how when you fail to take account of the
+	<code>this</code> argument in C++, your code not only fails to compile, but the error message references the actual
+	place where you made a mistake (the faulty call to <code>log</code>). This is the power of a good type system - it
+	stops you from doing absurd things. That's not the only way the type system protects you from <code>this</code>.
+	Because C++ considers class member functions a different type than standalone functions, it can easily stop you from
+	using <code>this</code> in standalone functions. JavaScript has no such distinction, so the best you could hope for
+	is an error as you call a function, though in practice it passes <code>undefined</code> and hopes for the best.
+</p>
+<h3>TypeScript to the rescue? Well, someday:</h3>
+<p>
+	So if the reason <code>this</code> is easy to deal with in C++ is because it has a type system, you might've thought
+	<i>is this also the case for TypeScript?</i> In theory, yes. TypeScript allows you to declare an explicit type for
+	<code>this</code> and refuses to compile when that type isn't passed.
+</p>
+<pre><code>class Stopwatch {
+	start = new Date;
+	reset(this: Stopwatch) { this.start = new Date; }
+	lap(this: Stopwatch) { return +new Date - +this.start; }
+};
+const stopwatch = new Stopwatch;
+stopwatch.reset(); // OK
+function log(f: (this: void) => number) { console.log(f()); }
+log(stopwatch.lap.bind(stopwatch)); // OK
+log(stopwatch.lap); // compile error :)</code></pre>
+<p>
+	Well isn't that just perfect, TypeScript has protected us from faulty <code>this</code> use! Unfortunately, you can
+	actually omit the <code>this</code> declaration from either function signature - in this case either
+	<code>lap</code> or <code>f</code> - and TypeScript will compile this no problem, even with all of the strictest
+	options. In my experience, very few libraries specify the <code>this</code> parameter of their callbacks. Until they
+	do, <code>this</code> will continue to be a minefield in TypeScript.
+</p>
+<p>
+	I can't say the TypeScript team is in the wrong for making it work like this, since a huge amount of working code
+	would break if <code>this</code> checking was as strict as other function parameters. For now, just try to type all
+	your <code>this</code> parameters in your own codebases, and please spread awareness - I've known several pretty
+	experienced TypeScript devs that didn't even know you can do this. Once <code>this</code> types are prolific enough,
+	we might be able to switch some codebases to strictly check <code>this</code> seamlessly, and then it would have a
+	reasonable shot of being added to TypeScript!
+</p>
+<small class="footnote"><sup>[1]</sup>For the purposes of this post, all JavaScript is in strict mode.</small>
+<small class="footnote">
+	<sup>[2]</sup>Well it doesn't exactly make <strong>no</strong> sense. But it is confusing whether
+	<code>stopwatch->lap</code> uses the semantics of JavaScript (i.e. <code>&Stopwatch::lap</code>) or the semantics of
+	Java (i.e. <code>std::bind_front(&Stopwatch::lap, stopwatch)</code>). I'm speculating here, but I think this is why
+	the C++ standardization committee have decided to not allow this construct.
+</small>

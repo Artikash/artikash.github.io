@@ -1,41 +1,41 @@
 <h2>Risk (board game) Battle Simulator</h2>
 <p>
-    Attacker: <input type="number" id="attacker" step="1" min="0" value="1" onchange="inputChanged()">
-    Defender: <input type="number" id="defender" step="1" min="0" value="1" onchange="inputChanged()"><br />
-    Runs: <input type="number" id="runs" step="1" min="0" value="1000" onchange="inputChanged()">
+	Attacker: <input type="number" id="attacker" step="1" min="0" value="1" onchange="inputChanged()">
+	Defender: <input type="number" id="defender" step="1" min="0" value="1" onchange="inputChanged()"><br />
+	Runs: <input type="number" id="runs" step="1" min="0" value="1000" onchange="inputChanged()">
 <p id="results"></p>
 </p>
 <script>
-    const diceRoll = () => Math.ceil(6 * Math.random());
+	const diceRoll = () => Math.ceil(6 * Math.random());
 
-    const simulateRoll = (attacker, defender) => {
-        const attackerRolls = Array(Math.min(attacker, 3)).fill().map(diceRoll).sort().reverse();
-        const defenderRolls = Array(Math.min(defender, 2)).fill().map(diceRoll).sort().reverse();
-        return defender < 2 || attacker < 2
-            ? attackerRolls[0] > defenderRolls[0] ? [0, 1] : [1, 0]
-            : attackerRolls[0] > defenderRolls[0]
-                ? attackerRolls[1] > defenderRolls[1] ? [0, 2] : [1, 1]
-                : attackerRolls[1] > defenderRolls[1] ? [1, 1] : [2, 0];
-    };
+	const simulateRoll = (attacker, defender) => {
+		const attackerRolls = Array(Math.min(attacker, 3)).fill().map(diceRoll).sort().reverse();
+		const defenderRolls = Array(Math.min(defender, 2)).fill().map(diceRoll).sort().reverse();
+		return defender < 2 || attacker < 2
+			? attackerRolls[0] > defenderRolls[0] ? [0, 1] : [1, 0]
+			: attackerRolls[0] > defenderRolls[0]
+				? attackerRolls[1] > defenderRolls[1] ? [0, 2] : [1, 1]
+				: attackerRolls[1] > defenderRolls[1] ? [1, 1] : [2, 0];
+	};
 
-    const simulateBattle = (attacker, defender) => {
-        if (attacker === 0 || defender === 0)
-            return [attacker, defender];
-        const [attackerLosses, defenderLosses] = simulateRoll(attacker, defender);
-        return simulateBattle(attacker - attackerLosses, defender - defenderLosses);
-    };
+	const simulateBattle = (attacker, defender) => {
+		if (attacker === 0 || defender === 0)
+			return [attacker, defender];
+		const [attackerLosses, defenderLosses] = simulateRoll(attacker, defender);
+		return simulateBattle(attacker - attackerLosses, defender - defenderLosses);
+	};
 
-    const monteCarloSimulationOfBattle = (attacker, defender, n) =>
-        Array(n).fill()
-            .map(simulateBattle.bind(null, attacker, defender))
-            .sort((res1, res2) => res1[0] - res2[0] || res1[1] - res2[1])
-            .map(result => result.toString())
-            .reduce((countMap, result) => (countMap[result] = ++countMap[result] || 1, countMap), {});
+	const monteCarloSimulationOfBattle = (attacker, defender, n) =>
+		Array(n).fill()
+			.map(simulateBattle.bind(null, attacker, defender))
+			.sort((res1, res2) => res1[0] - res2[0] || res1[1] - res2[1])
+			.map(result => result.toString())
+			.reduce((countMap, result) => (countMap[result] = ++countMap[result] || 1, countMap), {});
 
-    window.inputChanged = () => document.getElementById("results").innerText =
-        JSON.stringify(monteCarloSimulationOfBattle(
-            +document.getElementById("attacker").value,
-            +document.getElementById("defender").value,
-            +document.getElementById("runs").value
-        ));
+	window.inputChanged = () => document.getElementById("results").innerText =
+		JSON.stringify(monteCarloSimulationOfBattle(
+			+document.getElementById("attacker").value,
+			+document.getElementById("defender").value,
+			+document.getElementById("runs").value
+		));
 </script>

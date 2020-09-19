@@ -20,7 +20,7 @@ private:
 <p>
 	When writing the constructor of class <code>foo</code>, <code>m_bar</code> must be initialized in the initializer
 	list because it's <code>const</code>. The problem is that initializer lists may only contain expressions, not
-	statements. If the initialization code needs multiple statements, you're fucked! In the example above, even though
+	statements. If the initialization code needs multiple statements, this won't work! In the example above, even though
 	it can technically be done, it's definitely not something you want in your codebase. And you can easily imagine
 	situations where it gets much uglier or is impossible (most notably, if you want to create temporary variables to
 	store the results of intermediate computations). Of course, you could define a helper function instead, but then

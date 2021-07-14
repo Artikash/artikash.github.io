@@ -4,6 +4,8 @@
 	}
 	.compare > * {
 		width: 50%;
+		border: 1px solid black;
+		margin: 1px;
 	}
 	.footnote {
 		display: block;
@@ -20,10 +22,11 @@
 	<i>Um, WHAT!? <code>this</code> works completely differently in those languages!</i>
 </h3>
 <p>
-	No, the <code>this</code> keyword behaves very similarly in C++ and JavaScript<sup>[1]</sup>. It is a (typically)
-	hidden argument passed to a function (typically) when it is a member of an object, and is a reference to the object
-	that the function is a member of. The following snippets show the typical way you use <code>this</code> in C++,
-	JavaScript, and other object oriented languages such as Java and Python:
+	No, the <code>this</code> keyword behaves very similarly in C++ and JavaScript
+	<sup id="_1"><a href="#1_">[1]</a></sup>. It is a (typically) hidden argument passed to a function (typically) when
+	it is a member of an object, and is a reference to the object that the function is a member of. The following
+	snippets show the typical way you use <code>this</code> in C++, JavaScript, and other object oriented languages such
+	as Java and Python:
 </p>
 <div class="compare">
 	<pre><code>struct Stopwatch {
@@ -63,12 +66,11 @@ log(stopwatch.lap); // also throws an error, but...</code></pre>
 </p>
 <p>
 	This fundamental mistake manifests very differently between the two languages. In JavaScript, you get a runtime
-	error
-	<strong>inside <code>lap</code></strong> once it finds out its <code>this</code> argument isn't what it expected. In
-	C++ you get a compile error
+	error <strong>inside <code>lap</code></strong> once it finds out its <code>this</code> argument isn't what it
+	expected. In C++ you get a compile error
 	<strong>
-		the instant you type <code>stopwatch->lap</code> and don't call it. C++ knows that makes no sense<sup>[2]</sup>
-		because of the type system:
+		the instant you type <code>stopwatch->lap</code> and don't call it. C++ knows that makes no sense
+		<sup id="_2"><a href="#2_">[2]</a></sup> because of the type system:
 	</strong>
 	<code>lap</code> is no ordinary function returning a number, but a member function returning a number. This doesn't
 	mean it's impossible to use member functions as first-class values in C++ - it is! You just have to access them
@@ -91,7 +93,7 @@ log(stopwatch.lap); // also throws an error, but...</code></pre>
 <div class="compare">
 	<pre><code>log(std::bind(&Stopwatch::lap, stopwatch));
 log([&] { return stopwatch->lap(); });</code></pre>
-	<pre><code>log(stopwatch.lap.bind(stopwatch); // could use Stopwatch.prototype.lap too
+	<pre><code>log(stopwatch.lap.bind(stopwatch)); // could use Stopwatch.prototype.lap too
 log(() => stopwatch.lap());</code></pre>
 </div>
 <p>All four of those will do exactly what you want :)</p>
@@ -146,9 +148,11 @@ log(stopwatch.lap); // compile error :)</code></pre>
 	we might be able to switch some codebases to strictly check <code>this</code> seamlessly, and then it would have a
 	reasonable shot of being added to TypeScript!
 </p>
-<small class="footnote"><sup>[1]</sup>For the purposes of this post, all JavaScript is in strict mode.</small>
-<small class="footnote">
-	<sup>[2]</sup>Well it doesn't exactly make <strong>no</strong> sense. But it is confusing whether
+<small class="footnote" id="1_">
+	<sup><a href="#_1">[1]</a></sup>For the purposes of this post, all JavaScript is in strict mode.
+</small>
+<small class="footnote" id="2_">
+	<sup><a href="#_2">[2]</a></sup>Well it doesn't exactly make <strong>no</strong> sense. But it is confusing whether
 	<code>stopwatch->lap</code> uses the semantics of JavaScript (i.e. <code>&Stopwatch::lap</code>) or the semantics of
 	Java (i.e. <code>std::bind_front(&Stopwatch::lap, stopwatch)</code>). I'm speculating here, but I think this is why
 	the C++ standardization committee have decided to not allow this construct.

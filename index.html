@@ -99,6 +99,13 @@
 				{
 					month: "March 2019",
 					links: ['<a href="?hello_world">Hello World!</a>']
+				},
+				{
+					month: "Apps",
+					links: [
+						'<a href="?risk_simulator">Risk (board game) Simulator</a>',
+						'<a href="?clipboard_monitor">Clipboard Monitor</a>'
+					]
 				}
 			];
 
@@ -130,7 +137,7 @@
 					document.querySelector("article").innerHTML =
 						xhr.responseText.slice(0, 15) === "<!DOCTYPE html>" ? defaultContent : xhr.responseText;
 					for (var scripts = document.querySelector("article").getElementsByTagName("script"), i = 0;
-						i < scripts.length; ++i) eval(scripts[i].innerHTML);
+						i < scripts.length; ++i) eval("'use strict';" + scripts[i].innerHTML);
 					for (var elements = document.querySelectorAll("code"), i = 0; i < elements.length; ++i)
 						elements[i].innerHTML = elements[i].innerHTML.replace(/\t/g, "    ");
 					document.getElementById(window.location.hash.slice(1)).scrollIntoView();

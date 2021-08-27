@@ -8,5 +8,9 @@
 				const next = await navigator.clipboard.readText();
 				if (previous !== next) f(previous = next);
 			} catch (e) {}
-	})(() => 0);
+	})(text => document
+		.getElementById("monitor_root")
+		.insertAdjacentElement("afterbegin", document.createElement("p"))
+		.innerText = text
+	);
 </script>
